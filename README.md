@@ -1,19 +1,20 @@
 # Concierge
 
-Concierge is an HTTP server that dynamically creates TCP listeners 
+Concierge is an unconventional TCP Reverse Proxy designed to hide any TCP services "behind" HTTP server.
+
+It works by starting an HTTP server that dynamically creates TCP listeners 
 upon requests to a predefined URLs. It responds with the new port number, which the client must connect to.
 Traffic from the first successful connection is then redirected to another(usually internal) 
-service on a designated port.
+service on a designated port. The opened port exists only for that one connection.
 
-Only the original requester’s IP is allowed to connect to the provided port.
-
-Requests to undefined URLs are tarpitted unless `-ntp` argument is provided.
-
-You can bind any number of URLs to endpoints by repeating `-a` argument.
+Other features:
+- Only the original requester’s IP is allowed to connect to the provided port.
+- Requests to undefined URLs are tarpitted unless `-ntp` argument is provided.
+- You can bind any number of URLs to endpoints by repeating `-a` argument.
 
 ## Installation
 
-See [Releases](https://github.com/jackcvr/reverssh/releases)
+See [Releases](https://github.com/jackcvr/concierge/releases)
 
 ## Usage
 
@@ -40,9 +41,8 @@ Usage of concierge:
 ## Example
 
 On remote machine:
-
 - configure SSH server to bind to localhost.
-- start the Concierge HTTPS server, which responds to requests made to the /ssh URL:
+- start the Concierge TCP server over HTTPS, which responds to requests made to the `/ssh` path:
 
 ```shell
 $ sudo concierge -a /ssh:localhost:22 -crt server.crt -key server.key
@@ -56,7 +56,6 @@ $ sudo concierge -a /ssh:localhost:22 -crt server.crt -key server.key
 ```
 
 On local machine:
-
 - connect to your SSH server (assuming the IP of your remote machine is 8.8.8.8):
 
 ```shell
