@@ -42,7 +42,7 @@ Usage of concierge:
 
 On remote machine:
 - configure SSH server to bind to localhost.
-- start the Concierge TCP server over HTTPS, which responds to requests made to the `/ssh` path:
+- start the `concierge` on HTTPS, which responds to requests made to the `/ssh` path:
 
 ```shell
 $ sudo concierge -a /ssh:localhost:22 -crt server.crt -key server.key
