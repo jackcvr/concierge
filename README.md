@@ -1,6 +1,6 @@
 # Concierge
 
-Concierge is a HTTP server that dynamically creates TCP listeners 
+Concierge is an HTTP server that dynamically creates TCP listeners 
 upon requests to a predefined URLs. It responds with the new port number, which the client must connect to.
 Traffic from the first successful connection is then redirected to another(usually internal) 
 service on a designated port.
