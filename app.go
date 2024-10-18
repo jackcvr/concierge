@@ -16,17 +16,12 @@ const ContentLength = 1024 * 64 * 10
 
 type App struct {
 	Logger
-	bindAddress string
-	certFile    string
-	keyFile     string
-	timeout     time.Duration
-	endpoints   Endpoints
-	noTarpit    bool
-	mu          sync.Mutex
+	config Config
+	mu     sync.Mutex
 }
 
 func (app *App) Run() error {
-	for url, ep := range app.endpoints {
+	for url, ep := range app.config.Endpoints {
 		http.HandleFunc(fmt.Sprintf("GET %s", url), func(w http.ResponseWriter, r *http.Request) {
 			app.mu.Lock()
 			defer app.mu.Unlock()
@@ -51,7 +46,7 @@ func (app *App) Run() error {
 		}
 	})
 
-	if !app.noTarpit {
+	if !app.config.NoTarpit {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Length", fmt.Sprintf("%d", ContentLength))
 			w.WriteHeader(http.StatusNotFound)
@@ -82,13 +77,13 @@ func (app *App) Run() error {
 		http.DefaultServeMux.ServeHTTP(w, r)
 	})
 
-	addr, _ := net.ResolveTCPAddr("tcp", app.bindAddress)
-	if app.certFile != "" && app.keyFile != "" {
+	addr, _ := net.ResolveTCPAddr("tcp", app.config.Bind)
+	if app.config.CrtFile != "" && app.config.KeyFile != "" {
 		if addr.Port == 80 {
 			addr.Port = 443
 		}
 		app.Info("http/listening", "addr", addr)
-		return http.ListenAndServeTLS(addr.String(), app.certFile, app.keyFile, logRequest)
+		return http.ListenAndServeTLS(addr.String(), app.config.CrtFile, app.config.KeyFile, logRequest)
 	} else {
 		app.Info("Cert and key files are not provided: TLS is disabled...")
 		app.Info("http/listening", "addr", addr)
@@ -113,7 +108,8 @@ func (app *App) Accept(requestIP string, listener net.Listener, endpoint string)
 		app.Info("tcp/closed", "addr", ln.Addr())
 	}()
 
-	if err := ln.SetDeadline(time.Now().Add(app.timeout)); err != nil {
+	duration := time.Duration(app.config.Timeout) * time.Second
+	if err := ln.SetDeadline(time.Now().Add(duration)); err != nil {
 		app.Error(err.Error())
 		return
 	}

@@ -59,11 +59,18 @@ nfpms:
       - apk
       - deb
     contents:
-      - src: openrc/concierge
-        dst: /etc/init.d/concierge
+      - src: concierge.toml
+        dst: /etc/concierge/concierge.toml
         type: config|noreplace
         packager: apk
+      - src: openrc/concierge
+        dst: /etc/init.d/concierge
+        packager: apk
+
+      - src: concierge.toml
+        dst: /etc/concierge/concierge.toml
+        type: config|noreplace
+        packager: deb
       - src: systemd/concierge.service
         dst: /lib/systemd/system/concierge.service
-        type: config|noreplace
         packager: deb

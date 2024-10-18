@@ -3,7 +3,7 @@ Description=Concierge HTTP(S) server
 After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/concierge -a /ssh:localhost:22 -crt /root/server.crt -key /root/server.key
+ExecStart=/usr/local/bin/concierge -c /etc/concierge/concierge.toml
 Restart=always
 
 [Install]

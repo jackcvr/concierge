@@ -1,0 +1,11 @@
+tz = "Europe/Vilnius"
+bind = "0.0.0.0:80"
+crtfile = "server.crt"
+keyfile = "server.key"
+quiet = false
+verbose = false
+timeout = 2
+notarpit = false
+
+[endpoints]
+"/ssh" = "0.0.0.0:2222"

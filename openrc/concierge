@@ -2,9 +2,13 @@
 
 supervisor=supervise-daemon
 
-command="/usr/local/bin/concierge"
-command_args="-f /var/log/concierge.log -a /ssh:localhost:22 -crt /root/server.crt -key /root/server.key"
 description="Concierge HTTP(S) server"
+command="/usr/local/bin/concierge"
+command_args="-c /etc/concierge/concierge.toml"
+command_background=true
+pidfile="/run/${RC_SVCNAME}.pid"
+output_log="/var/log/${RC_SVCNAME}.log"
+error_log="/var/log/${RC_SVCNAME}.log"
 
 depend() {
 	need net

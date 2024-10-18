@@ -36,7 +36,7 @@ func (l Logger) Error(format string, args ...any) {
 	}
 }
 
-func (l Logger) InitSLogger(file string, flags int) error {
+func (l Logger) InitSLogger(flags int) {
 	if flags > 0 {
 		log.SetFlags(flags)
 	} else {
@@ -46,22 +46,6 @@ func (l Logger) InitSLogger(file string, flags int) error {
 	if l.verbose {
 		level = slog.LevelDebug
 	}
-	logger, err := NewSLogger(file, level)
-	if err != nil {
-		return err
-	}
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: level}))
 	slog.SetDefault(logger)
-	return nil
-}
-
-func NewSLogger(file string, level slog.Level) (*slog.Logger, error) {
-	w := os.Stdout
-	if file != "" {
-		var err error
-		w, err = os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return slog.New(slog.NewJSONHandler(w, &slog.HandlerOptions{Level: level})), nil
 }
